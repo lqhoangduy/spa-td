@@ -2,10 +2,10 @@ import bcrypt from "bcryptjs";
 import db from "../models/index";
 const salt = bcrypt.genSaltSync(10);
 
-let createNewUser = async (data) => {
+const createNewUser = async (data) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+			const hashPasswordFromBcrypt = await hashUserPassword(data.password);
 
 			await db.User.create({
 				email: data.email,
@@ -25,10 +25,10 @@ let createNewUser = async (data) => {
 	});
 };
 
-let hashUserPassword = (password) => {
+const hashUserPassword = (password) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const hashPassword = await bcrypt.hashSync("B4c0//", salt);
+			const hashPassword = await bcrypt.hashSync(password, salt);
 			resolve(hashPassword);
 		} catch (error) {
 			reject(error);
@@ -36,10 +36,10 @@ let hashUserPassword = (password) => {
 	});
 };
 
-let getAllUser = () => {
+const getAllUser = () => {
 	return new Promise((resolve, reject) => {
 		try {
-			let users = db.User.findAll({
+			const users = db.User.findAll({
 				raw: true,
 			});
 			resolve(users);
@@ -49,10 +49,10 @@ let getAllUser = () => {
 	});
 };
 
-let getUserInfoById = (userId) => {
+const getUserInfoById = (userId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let user = await db.User.findOne({ where: { id: userId }, raw: true });
+			const user = await db.User.findOne({ where: { id: userId }, raw: true });
 			if (user) {
 				resolve(user);
 			} else {
@@ -64,10 +64,10 @@ let getUserInfoById = (userId) => {
 	});
 };
 
-let updateUserData = (data) => {
+const updateUserData = (data) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let user = await db.User.findOne({ where: { id: data.id } });
+			const user = await db.User.findOne({ where: { id: data.id } });
 			if (user) {
 				user.firstName = data.firstName;
 				user.lastName = data.lastName;
@@ -75,7 +75,7 @@ let updateUserData = (data) => {
 
 				await user.save();
 
-				let allUser = await db.User.findAll({
+				const allUser = await db.User.findAll({
 					raw: true,
 				});
 				resolve(allUser);
@@ -88,10 +88,10 @@ let updateUserData = (data) => {
 	});
 };
 
-let deleteUserById = (id) => {
+const deleteUserById = (id) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let user = await db.User.findOne({ where: { id: id } });
+			const user = await db.User.findOne({ where: { id: id } });
 			if (user) {
 				await user.destroy();
 			}

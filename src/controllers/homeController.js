@@ -1,9 +1,9 @@
 import db from "../models/index";
 import CRUDService from "../services/CRUDService";
 
-let getHomePage = async (req, res) => {
+const getHomePage = async (req, res) => {
 	try {
-		let data = await db.User.findAll();
+		const data = await db.User.findAll();
 		return res.render("homepage.ejs", {
 			data: JSON.stringify(data),
 		});
@@ -12,32 +12,30 @@ let getHomePage = async (req, res) => {
 	}
 };
 
-let getAboutPage = (req, res) => {
+const getAboutPage = (req, res) => {
 	return res.render("test/about.ejs");
 };
 
-let getCRUD = (req, res) => {
+const getCRUD = (req, res) => {
 	return res.render("crud.ejs");
 };
 
-let postCRUD = async (req, res) => {
-	let message = await CRUDService.createNewUser(req.body);
-	console.log(message);
+const postCRUD = async (req, res) => {
+	const message = await CRUDService.createNewUser(req.body);
 	return res.send("Post crud form server");
 };
 
-let displayGetCRUD = async (req, res) => {
-	let data = await CRUDService.getAllUser();
+const displayGetCRUD = async (req, res) => {
+	const data = await CRUDService.getAllUser();
 	return res.render("displayCRUD.ejs", {
 		dataTable: data,
 	});
 };
 
-let getEditCRUD = async (req, res) => {
-	console.log(req.query.id);
-	let userId = req.query.id;
+const getEditCRUD = async (req, res) => {
+	const userId = req.query.id;
 	if (userId) {
-		let userData = await CRUDService.getUserInfoById(userId);
+		const userData = await CRUDService.getUserInfoById(userId);
 		return res.render("editCRUD.ejs", {
 			user: userData,
 		});
@@ -46,16 +44,16 @@ let getEditCRUD = async (req, res) => {
 	}
 };
 
-let putCRUD = async (req, res) => {
-	let data = req.body;
-	let allUser = await CRUDService.updateUserData(data);
+const putCRUD = async (req, res) => {
+	const data = req.body;
+	const allUser = await CRUDService.updateUserData(data);
 	return res.render("displayCRUD.ejs", {
 		dataTable: allUser,
 	});
 };
 
-let deleteCRUD = async (req, res) => {
-	let id = req.query.id;
+const deleteCRUD = async (req, res) => {
+	const id = req.query.id;
 	if (id) {
 		await CRUDService.deleteUserById(id);
 		return res.send("Delete user successfully!!! ");
