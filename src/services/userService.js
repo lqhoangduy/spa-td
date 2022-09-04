@@ -156,6 +156,12 @@ const editUser = (data) => {
 				user.firstName = data.firstName;
 				user.lastName = data.lastName;
 				user.address = data.address;
+				if (data.phoneNumber) {
+					user.phoneNumber = data.phoneNumber;
+				}
+				if (data.gender) {
+					user.gender = data.gender;
+				}
 
 				await user.save();
 
