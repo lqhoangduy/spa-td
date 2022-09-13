@@ -181,10 +181,37 @@ const editUser = (data) => {
 	});
 };
 
+const getAllCode = async (type) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!type) {
+				resolve({
+					errorCode: 1,
+					message: "Missing required parameters!",
+				});
+			} else {
+				const allCode = await db.Allcode.findAll({
+					where: {
+						type,
+					},
+				});
+
+				resolve({
+					errorCode: 0,
+					data: allCode,
+				});
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 module.exports = {
 	handleUserLogin: handleUserLogin,
 	getAllUsers: getAllUsers,
 	createNewUser: createNewUser,
 	deleteUser: deleteUser,
 	editUser: editUser,
+	getAllCode: getAllCode,
 };
