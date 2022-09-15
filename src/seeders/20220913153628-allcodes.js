@@ -164,6 +164,14 @@ module.exports = {
 				updatedAt: new Date(),
 			},
 			{
+				type: "POSITION",
+				key: "P5",
+				valueEn: "Other",
+				valueVi: "Khác",
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			{
 				type: "GENDER",
 				key: "M",
 				valueEn: "Male",
