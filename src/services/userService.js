@@ -1,6 +1,8 @@
 import db from "../models/index";
 import bcrypt from "bcryptjs";
 
+import commonService from "../services/commonService";
+
 const salt = bcrypt.genSaltSync(10);
 
 const handleUserLogin = (email, password) => {
@@ -62,7 +64,15 @@ const getAllUsers = (userId) => {
 					},
 				});
 			}
-			resolve(users);
+			const result = users.map((user) => {
+				let image = user.image ? commonService.decrypt(user.image) : null;
+				console.log(image);
+				return {
+					...user,
+					image: image,
+				};
+			});
+			resolve(result);
 		} catch (error) {
 			reject(error);
 		}
@@ -84,6 +94,11 @@ const createNewUser = (data) => {
 
 			const hashPasswordFromBcrypt = await hashUserPassword(data.password);
 
+			let imageHash = "";
+			if (data.avatar) {
+				imageHash = commonService.encrypt(data.avatar);
+			}
+
 			await db.User.create({
 				email: data.email,
 				password: hashPasswordFromBcrypt,
@@ -94,6 +109,7 @@ const createNewUser = (data) => {
 				gender: data.gender,
 				roleId: data.roleId,
 				positionId: data.positionId,
+				image: imageHash,
 			});
 
 			resolve({
@@ -162,6 +178,16 @@ const editUser = (data) => {
 				}
 				if (data.gender) {
 					user.gender = data.gender;
+				}
+				if (data.roleId) {
+					user.roleId = data.roleId;
+				}
+				if (data.positionId) {
+					user.positionId = data.positionId;
+				}
+				if (data.avatar) {
+					const imageHash = commonService.encrypt(data.avatar);
+					user.image = imageHash;
 				}
 
 				await user.save();

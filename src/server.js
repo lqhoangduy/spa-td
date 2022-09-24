@@ -1,10 +1,10 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import fileUpload from "express-fileupload";
 import viewEngine from "./config/viewEngine";
 import initWebRoutes from "./route/web";
 import connectDB from "./config/connectDB";
-
 require("dotenv").config();
 
 const app = express();
@@ -14,6 +14,11 @@ const corsOptions = {
 	credentials: true,
 };
 app.use(cors(corsOptions));
+app.use(
+	fileUpload({
+		useTempFiles: true,
+	})
+);
 
 // config app
 app.use(bodyParser.json());
