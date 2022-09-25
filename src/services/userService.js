@@ -66,7 +66,6 @@ const getAllUsers = (userId) => {
 			}
 			const result = users.map((user) => {
 				let image = user.image ? commonService.decrypt(user.image) : null;
-				console.log(image);
 				return {
 					...user,
 					image: image,

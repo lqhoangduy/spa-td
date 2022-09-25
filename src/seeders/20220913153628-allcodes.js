@@ -5,7 +5,7 @@ module.exports = {
 		return queryInterface.bulkInsert("allcodes", [
 			{
 				type: "ROLE",
-				key: "R1",
+				keyMap: "R1",
 				valueEn: "Admin",
 				valueVi: "Quản trị viên",
 				createdAt: new Date(),
@@ -13,7 +13,7 @@ module.exports = {
 			},
 			{
 				type: "ROLE",
-				key: "R2",
+				keyMap: "R2",
 				valueEn: "Doctor",
 				valueVi: "Bác sĩ",
 				createdAt: new Date(),
@@ -21,7 +21,7 @@ module.exports = {
 			},
 			{
 				type: "ROLE",
-				key: "R3",
+				keyMap: "R3",
 				valueEn: "Patient",
 				valueVi: "Bệnh nhân",
 				createdAt: new Date(),
@@ -29,7 +29,7 @@ module.exports = {
 			},
 			{
 				type: "STATUS",
-				key: "S1",
+				keyMap: "S1",
 				valueEn: "New",
 				valueVi: "Lịch hẹn mới",
 				createdAt: new Date(),
@@ -37,7 +37,7 @@ module.exports = {
 			},
 			{
 				type: "STATUS",
-				key: "S2",
+				keyMap: "S2",
 				valueEn: "Confirmed",
 				valueVi: "Đã xác nhận",
 				createdAt: new Date(),
@@ -45,7 +45,7 @@ module.exports = {
 			},
 			{
 				type: "STATUS",
-				key: "S3",
+				keyMap: "S3",
 				valueEn: "Done",
 				valueVi: "Đã khám xong",
 				createdAt: new Date(),
@@ -53,7 +53,7 @@ module.exports = {
 			},
 			{
 				type: "STATUS",
-				key: "S4",
+				keyMap: "S4",
 				valueEn: "Cancel",
 				valueVi: "Đã hủy",
 				createdAt: new Date(),
@@ -61,7 +61,7 @@ module.exports = {
 			},
 			{
 				type: "TIME",
-				key: "T1",
+				keyMap: "T1",
 				valueEn: "8:00 AM - 9:00 AM",
 				valueVi: "8:00 - 9:00",
 				createdAt: new Date(),
@@ -69,7 +69,7 @@ module.exports = {
 			},
 			{
 				type: "TIME",
-				key: "T2",
+				keyMap: "T2",
 				valueEn: "9:00 AM - 10:00 AM",
 				valueVi: "9:00 - 10:00",
 				createdAt: new Date(),
@@ -77,7 +77,7 @@ module.exports = {
 			},
 			{
 				type: "TIME",
-				key: "T3",
+				keyMap: "T3",
 				valueEn: "10:00 AM - 11:00 AM",
 				valueVi: "10:00 - 11:00",
 				createdAt: new Date(),
@@ -85,7 +85,7 @@ module.exports = {
 			},
 			{
 				type: "TIME",
-				key: "T4",
+				keyMap: "T4",
 				valueEn: "11:00 AM - 0:00 PM",
 				valueVi: "11:00 - 12:00",
 				createdAt: new Date(),
@@ -93,7 +93,7 @@ module.exports = {
 			},
 			{
 				type: "TIME",
-				key: "T5",
+				keyMap: "T5",
 				valueEn: "1:00 PM - 2:00 PM",
 				valueVi: "13:00 - 14:00",
 				createdAt: new Date(),
@@ -101,7 +101,7 @@ module.exports = {
 			},
 			{
 				type: "TIME",
-				key: "T6",
+				keyMap: "T6",
 				valueEn: "2:00 PM - 3:00 PM",
 				valueVi: "14:00 - 15:00",
 				createdAt: new Date(),
@@ -109,7 +109,7 @@ module.exports = {
 			},
 			{
 				type: "TIME",
-				key: "T7",
+				keyMap: "T7",
 				valueEn: "3:00 PM - 4:00 PM",
 				valueVi: "15:00 - 16:00",
 				createdAt: new Date(),
@@ -117,7 +117,7 @@ module.exports = {
 			},
 			{
 				type: "TIME",
-				key: "T8",
+				keyMap: "T8",
 				valueEn: "4:00 PM - 5:00 PM",
 				valueVi: "16:00 - 17:00",
 				createdAt: new Date(),
@@ -125,15 +125,15 @@ module.exports = {
 			},
 			{
 				type: "POSITION",
-				key: "P0",
-				valueEn: "None",
+				keyMap: "P0",
+				valueEn: "Doctor",
 				valueVi: "Bác sĩ",
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
 			{
 				type: "POSITION",
-				key: "P1",
+				keyMap: "P1",
 				valueEn: "Master",
 				valueVi: "Thạc sĩ",
 				createdAt: new Date(),
@@ -141,15 +141,15 @@ module.exports = {
 			},
 			{
 				type: "POSITION",
-				key: "P2",
-				valueEn: "Doctor",
+				keyMap: "P2",
+				valueEn: "D.",
 				valueVi: "Tiến sĩ",
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
 			{
 				type: "POSITION",
-				key: "P3",
+				keyMap: "P3",
 				valueEn: "Associate Professor",
 				valueVi: "Phó giáo sư",
 				createdAt: new Date(),
@@ -157,7 +157,7 @@ module.exports = {
 			},
 			{
 				type: "POSITION",
-				key: "P4",
+				keyMap: "P4",
 				valueEn: "Professor",
 				valueVi: "Giáo sư",
 				createdAt: new Date(),
@@ -165,7 +165,7 @@ module.exports = {
 			},
 			{
 				type: "POSITION",
-				key: "P5",
+				keyMap: "P5",
 				valueEn: "Other",
 				valueVi: "Khác",
 				createdAt: new Date(),
@@ -173,7 +173,7 @@ module.exports = {
 			},
 			{
 				type: "GENDER",
-				key: "M",
+				keyMap: "M",
 				valueEn: "Male",
 				valueVi: "Nam",
 				createdAt: new Date(),
@@ -181,7 +181,7 @@ module.exports = {
 			},
 			{
 				type: "GENDER",
-				key: "F",
+				keyMap: "F",
 				valueEn: "Female",
 				valueVi: "Nữ",
 				createdAt: new Date(),
@@ -189,7 +189,7 @@ module.exports = {
 			},
 			{
 				type: "GENDER",
-				key: "O",
+				keyMap: "O",
 				valueEn: "Other",
 				valueVi: "Khác",
 				createdAt: new Date(),
