@@ -25,7 +25,7 @@ const initWebRoutes = (app) => {
 	router.post("/put-crud", homeController.putCRUD);
 	router.get("/delete-crud", homeController.deleteCRUD);
 
-	// API
+	// User
 	router.post("/api/login", userController.handleLogin);
 	router.get("/api/get-users", userController.handleGetAllUsers);
 	router.post("/api/create-user", userController.handleCreateUser);
@@ -33,11 +33,15 @@ const initWebRoutes = (app) => {
 	router.delete("/api/delete-user", userController.handleDeleteUser);
 	router.get("/api/all-code", userController.handleGetAllCode);
 
+	// Doctor
 	router.get("/api/top-doctor-home", doctorController.handleGetTopDoctorHome);
-
 	router.get("/api/get-all-doctors", doctorController.handleGetAllDoctors);
 	router.get("/api/get-info-doctor", doctorController.handleGetInfoDoctor);
 	router.post("/api/save-info-doctor", doctorController.handleSaveInfoDoctor);
+	router.get(
+		"/api/get-detail-doctor-by-id",
+		doctorController.handleGetDetailDoctorById
+	);
 
 	// Upload image only admin can use
 	router.post("/api/upload", (req, res) => {

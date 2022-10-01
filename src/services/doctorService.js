@@ -30,7 +30,7 @@ const getTopDoctorHome = (limit) => {
 				nest: true,
 			});
 			const result = users.map((user) => {
-				let image = user.image ? commonService.decrypt(user.image) : null;
+				const image = user.image ? commonService.decrypt(user.image) : null;
 				return {
 					...user,
 					image: image,
@@ -139,9 +139,55 @@ const getInfoDoctor = (doctorId) => {
 	});
 };
 
+const getDetailDoctorById = (id) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!id) {
+				resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			} else {
+				const user = await db.User.findOne({
+					where: { id: id },
+					attributes: {
+						exclude: ["password, image"],
+					},
+					include: [
+						{
+							model: db.Markdown,
+							attributes: ["description", "contentHTML", "contentMarkdown"],
+						},
+						{
+							model: db.Allcode,
+							as: "positionData",
+							attributes: ["valueVi", "valueEn"],
+						},
+					],
+					raw: true,
+					nest: true,
+				});
+
+				if (user) {
+					const image = user?.image ? commonService.decrypt(user.image) : null;
+					user.image = image;
+				}
+
+				resolve({
+					errorCode: 0,
+					data: user,
+				});
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
 	saveInfoDoctor: saveInfoDoctor,
 	getInfoDoctor: getInfoDoctor,
+	getDetailDoctorById: getDetailDoctorById,
 };

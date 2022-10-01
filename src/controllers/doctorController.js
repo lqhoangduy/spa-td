@@ -50,9 +50,23 @@ const handleGetInfoDoctor = async (req, res) => {
 	}
 };
 
+const handleGetDetailDoctorById = async (req, res) => {
+	try {
+		const { id } = req.query;
+		const response = await doctorService.getDetailDoctorById(id);
+		return res.status(200).json(response);
+	} catch (error) {
+		console.error(error);
+		return res
+			.status(200)
+			.json({ errorCode: -1, message: "Error from server" });
+	}
+};
+
 module.exports = {
 	handleGetTopDoctorHome: handleGetTopDoctorHome,
 	handleGetAllDoctors: handleGetAllDoctors,
 	handleSaveInfoDoctor: handleSaveInfoDoctor,
 	handleGetInfoDoctor: handleGetInfoDoctor,
+	handleGetDetailDoctorById: handleGetDetailDoctorById,
 };
