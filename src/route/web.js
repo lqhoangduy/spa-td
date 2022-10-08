@@ -42,6 +42,12 @@ const initWebRoutes = (app) => {
 		"/api/get-detail-doctor-by-id",
 		doctorController.handleGetDetailDoctorById
 	);
+	router.post("/api/create-schedules", doctorController.handleCreateSchedules);
+	router.get("/api/get-schedules", doctorController.handleGetSchedules);
+	router.delete(
+		"/api/delete-schedules",
+		doctorController.handleDeleteSchedules
+	);
 
 	// Upload image only admin can use
 	router.post("/api/upload", (req, res) => {
