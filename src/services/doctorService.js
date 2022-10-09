@@ -305,6 +305,49 @@ const deleteSchedules = (id) => {
 	});
 };
 
+const getSchedulesByDate = (doctorId, date) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!doctorId || !date) {
+				resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			} else {
+				const formatDate = moment(date).startOf("days").toDate();
+				const schedules = await db.Schedule.findAll({
+					where: {
+						doctorId: doctorId,
+						[Op.and]: [
+							sequelize.where(
+								sequelize.fn("date", sequelize.col("date")),
+								"=",
+								formatDate
+							),
+						],
+					},
+					include: [
+						{
+							model: db.Allcode,
+							as: "timeTypeData",
+							attributes: ["valueVi", "valueEn"],
+						},
+					],
+					raw: true,
+					nest: true,
+				});
+
+				resolve({
+					errorCode: 0,
+					data: schedules || [],
+				});
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
@@ -314,4 +357,5 @@ module.exports = {
 	createSchedules: createSchedules,
 	getSchedules: getSchedules,
 	deleteSchedules: deleteSchedules,
+	getSchedulesByDate: getSchedulesByDate,
 };
