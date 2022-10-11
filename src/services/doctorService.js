@@ -78,13 +78,19 @@ const saveInfoDoctor = (request) => {
 			if (
 				!request.doctorId ||
 				!request.contentHTML ||
-				!request.contentMarkdown
+				!request.contentMarkdown ||
+				!request.priceId ||
+				!request.provinceId ||
+				!request.paymentId ||
+				!request.addressClinic ||
+				!request.nameClinic
 			) {
 				resolve({
 					errorCode: 1,
 					message: "Missing params!",
 				});
 			} else {
+				// Markdown
 				const markdown = await db.Markdown.findOne({
 					where: { doctorId: request.doctorId },
 					raw: false,
@@ -92,15 +98,9 @@ const saveInfoDoctor = (request) => {
 				if (markdown) {
 					markdown.contentHTML = request.contentHTML;
 					markdown.contentMarkdown = request.contentMarkdown;
-					markdown.doctorId = request.doctorId;
 					markdown.description = request.description;
 
 					await markdown.save();
-					resolve({
-						errorCode: 0,
-						data: true,
-						message: "Update info successfully",
-					});
 				} else {
 					await db.Markdown.create({
 						contentHTML: request.contentHTML,
@@ -108,12 +108,40 @@ const saveInfoDoctor = (request) => {
 						doctorId: request.doctorId,
 						description: request.description,
 					});
-					resolve({
-						errorCode: 0,
-						data: true,
-						message: "Create info successfully",
+				}
+
+				// Doctor info
+				const doctorInfo = await db.DoctorInfo.findOne({
+					where: { doctorId: request.doctorId },
+					raw: false,
+				});
+
+				if (doctorInfo) {
+					doctorInfo.priceId = request.priceId;
+					doctorInfo.provinceId = request.provinceId;
+					doctorInfo.paymentId = request.paymentId;
+					doctorInfo.addressClinic = request.addressClinic;
+					doctorInfo.nameClinic = request.nameClinic;
+					doctorInfo.note = request.note;
+
+					await doctorInfo.save();
+				} else {
+					await db.DoctorInfo.create({
+						doctorId: request.doctorId,
+						priceId: request.priceId,
+						provinceId: request.provinceId,
+						paymentId: request.paymentId,
+						addressClinic: request.addressClinic,
+						nameClinic: request.nameClinic,
+						note: request.note,
 					});
 				}
+
+				resolve({
+					errorCode: 0,
+					data: true,
+					message: "Save info successfully",
+				});
 			}
 		} catch (error) {
 			reject(error);
@@ -133,9 +161,15 @@ const getInfoDoctor = (doctorId) => {
 				const markdown = await db.Markdown.findOne({
 					where: { doctorId: doctorId },
 				});
+				const doctorInfo = await db.DoctorInfo.findOne({
+					where: { doctorId: doctorId },
+				});
 				resolve({
 					errorCode: 0,
-					data: markdown,
+					data: {
+						...markdown,
+						...doctorInfo,
+					},
 				});
 			}
 		} catch (error) {
