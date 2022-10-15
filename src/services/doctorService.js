@@ -198,6 +198,29 @@ const getDetailDoctorById = (id) => {
 							attributes: ["description", "contentHTML", "contentMarkdown"],
 						},
 						{
+							model: db.DoctorInfo,
+							attributes: {
+								exclude: ["id", "doctorId"],
+							},
+							include: [
+								{
+									model: db.Allcode,
+									as: "priceData",
+									attributes: ["valueVi", "valueEn"],
+								},
+								{
+									model: db.Allcode,
+									as: "provinceData",
+									attributes: ["valueVi", "valueEn"],
+								},
+								{
+									model: db.Allcode,
+									as: "paymentData",
+									attributes: ["valueVi", "valueEn"],
+								},
+							],
+						},
+						{
 							model: db.Allcode,
 							as: "positionData",
 							attributes: ["valueVi", "valueEn"],
@@ -382,6 +405,52 @@ const getSchedulesByDate = (doctorId, date) => {
 	});
 };
 
+const getExtraInfo = (id) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!id) {
+				resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			} else {
+				const doctorInfo = await db.DoctorInfo.findOne({
+					where: { doctorId: id },
+					attributes: {
+						exclude: ["id, doctorId"],
+					},
+					include: [
+						{
+							model: db.Allcode,
+							as: "priceData",
+							attributes: ["valueVi", "valueEn"],
+						},
+						{
+							model: db.Allcode,
+							as: "provinceData",
+							attributes: ["valueVi", "valueEn"],
+						},
+						{
+							model: db.Allcode,
+							as: "paymentData",
+							attributes: ["valueVi", "valueEn"],
+						},
+					],
+					raw: true,
+					nest: true,
+				});
+
+				resolve({
+					errorCode: 0,
+					data: doctorInfo,
+				});
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
@@ -392,4 +461,5 @@ module.exports = {
 	getSchedules: getSchedules,
 	deleteSchedules: deleteSchedules,
 	getSchedulesByDate: getSchedulesByDate,
+	getExtraInfo: getExtraInfo,
 };

@@ -52,6 +52,10 @@ const initWebRoutes = (app) => {
 		"/api/get-schedules-by-date",
 		doctorController.handleGetSchedulesByDate
 	);
+	router.get(
+		"/api/get-extra-info-doctor",
+		doctorController.handleGetExtraInfoDoctor
+	);
 
 	// Upload image only admin can use
 	router.post("/api/upload", (req, res) => {
