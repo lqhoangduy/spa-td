@@ -190,7 +190,7 @@ const getDetailDoctorById = (id) => {
 				const user = await db.User.findOne({
 					where: { id: id },
 					attributes: {
-						exclude: ["password, image"],
+						exclude: ["password"],
 					},
 					include: [
 						{
@@ -371,7 +371,7 @@ const getSchedulesByDate = (doctorId, date) => {
 					message: "Missing params!",
 				});
 			} else {
-				const formatDate = moment(date).startOf("days").toDate();
+				const formatDate = moment(new Date(date)).startOf("days").toDate();
 				const schedules = await db.Schedule.findAll({
 					where: {
 						doctorId: doctorId,
@@ -388,6 +388,11 @@ const getSchedulesByDate = (doctorId, date) => {
 							model: db.Allcode,
 							as: "timeTypeData",
 							attributes: ["valueVi", "valueEn"],
+						},
+						{
+							model: db.User,
+							as: "doctorData",
+							attributes: ["firstName", "lastName"],
 						},
 					],
 					raw: true,

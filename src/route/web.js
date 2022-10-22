@@ -4,6 +4,7 @@ const fs = require("fs");
 import homeController from "../controllers/homeController";
 import userController from "../controllers/userController";
 import doctorController from "../controllers/doctorController";
+import patientController from "../controllers/patientController";
 
 // we will upload image on cloudinary
 cloudinary.config({
@@ -56,6 +57,8 @@ const initWebRoutes = (app) => {
 		"/api/get-extra-info-doctor",
 		doctorController.handleGetExtraInfoDoctor
 	);
+
+	router.post("/api/book-appointment", patientController.handleBookAppointment);
 
 	// Upload image only admin can use
 	router.post("/api/upload", (req, res) => {
