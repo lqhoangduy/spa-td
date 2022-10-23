@@ -5,6 +5,7 @@ import homeController from "../controllers/homeController";
 import userController from "../controllers/userController";
 import doctorController from "../controllers/doctorController";
 import patientController from "../controllers/patientController";
+import specialtyController from "../controllers/specialtyController";
 
 // we will upload image on cloudinary
 cloudinary.config({
@@ -62,6 +63,17 @@ const initWebRoutes = (app) => {
 	router.post(
 		"/api/verify-book-appointment",
 		patientController.handleVerifyBookAppointment
+	);
+
+	router.post(
+		"/api/create-specialty",
+		specialtyController.handleCreateSpecialty
+	);
+	router.get("/api/get-specialties", specialtyController.handleGetSpecialties);
+	router.put("/api/edit-specialty", specialtyController.handleEditSpecialty);
+	router.delete(
+		"/api/delete-specialty",
+		specialtyController.handleDeleteSpecialty
 	);
 
 	// Upload image only admin can use

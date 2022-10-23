@@ -1,5 +1,4 @@
 import moment from "moment";
-import sequelize, { Op } from "sequelize";
 import db from "../models/index";
 import { DEFAULT_PASSWORD, ROLES, STATUS } from "../utils/contants";
 import { v4 as uuidv4 } from "uuid";
