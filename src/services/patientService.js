@@ -11,7 +11,7 @@ require("dotenv").config();
 const buildUrlVerify = (doctorId) => {
 	const urlWeb = process.env.URL_WEB;
 	const token = uuidv4();
-	const tokenEncrypt = commonService.encryptString(token);
+	const tokenEncrypt = commonService.encrypt({ token });
 	const urlVerify = `${urlWeb}/verify-booking?id=${doctorId}&token=${tokenEncrypt}`;
 
 	return {
@@ -128,12 +128,12 @@ const verifyBookAppointment = (data) => {
 					message: "Missing params!",
 				});
 			} else {
-				const tokenDecrypt = commonService.decryptString(data.token);
+				const { token } = commonService.decrypt(data.token);
 
 				const appointment = await db.Booking.findOne({
 					where: {
 						doctorId: data.doctorId,
-						token: tokenDecrypt,
+						token: token,
 						statusId: STATUS.NEW,
 					},
 					raw: false,
