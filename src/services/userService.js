@@ -240,4 +240,5 @@ module.exports = {
 	deleteUser: deleteUser,
 	editUser: editUser,
 	getAllCode: getAllCode,
+	hashUserPassword: hashUserPassword,
 };

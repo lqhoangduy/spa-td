@@ -59,6 +59,10 @@ const initWebRoutes = (app) => {
 	);
 
 	router.post("/api/book-appointment", patientController.handleBookAppointment);
+	router.post(
+		"/api/verify-book-appointment",
+		patientController.handleVerifyBookAppointment
+	);
 
 	// Upload image only admin can use
 	router.post("/api/upload", (req, res) => {

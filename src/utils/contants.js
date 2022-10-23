@@ -15,3 +15,5 @@ export const LANGUAGES = {
 	VI: "vi",
 	EN: "en",
 };
+
+export const DEFAULT_PASSWORD = "123456";
