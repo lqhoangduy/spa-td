@@ -57,9 +57,25 @@ const handleDeleteSpecialty = async (req, res) => {
 	}
 };
 
+const handleGetSpecialty = async (req, res) => {
+	try {
+		const id = req.query.id;
+		const data = await specialtyService.getSpecialty(id);
+
+		return res.status(200).json(data);
+	} catch (error) {
+		console.error(error);
+		return res.status(200).json({
+			errorCode: -1,
+			message: "Error from server",
+		});
+	}
+};
+
 module.exports = {
 	handleCreateSpecialty: handleCreateSpecialty,
 	handleGetSpecialties: handleGetSpecialties,
 	handleEditSpecialty: handleEditSpecialty,
 	handleDeleteSpecialty: handleDeleteSpecialty,
+	handleGetSpecialty: handleGetSpecialty,
 };

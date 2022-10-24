@@ -63,6 +63,19 @@ const handleGetDetailDoctorById = async (req, res) => {
 	}
 };
 
+const handleGetDoctorByIds = async (req, res) => {
+	try {
+		const { ids } = req.body;
+		const response = await doctorService.getDoctorByIds(ids);
+		return res.status(200).json(response);
+	} catch (error) {
+		console.error(error);
+		return res
+			.status(200)
+			.json({ errorCode: -1, message: "Error from server" });
+	}
+};
+
 const handleCreateSchedules = async (req, res) => {
 	try {
 		const response = await doctorService.createSchedules(req.body);
@@ -138,4 +151,5 @@ module.exports = {
 	handleDeleteSchedules: handleDeleteSchedules,
 	handleGetSchedulesByDate: handleGetSchedulesByDate,
 	handleGetExtraInfoDoctor: handleGetExtraInfoDoctor,
+	handleGetDoctorByIds: handleGetDoctorByIds,
 };

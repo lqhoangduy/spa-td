@@ -123,7 +123,37 @@ const deleteSpecialty = (id) => {
 			await specialty.destroy();
 			resolve({
 				errorCode: 0,
-				message: "Deleted 15 successfully",
+				message: "Deleted successfully",
+			});
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
+const getSpecialty = (id) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!id) {
+				return resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			}
+
+			const specialty = await db.Specialty.findOne({
+				where: { id: id },
+			});
+			if (!specialty) {
+				return resolve({
+					errorCode: 2,
+					message: "not_found",
+				});
+			}
+
+			resolve({
+				errorCode: 0,
+				data: specialty,
 			});
 		} catch (error) {
 			reject(error);
@@ -136,4 +166,5 @@ module.exports = {
 	getSpecialties: getSpecialties,
 	editSpecialty: editSpecialty,
 	deleteSpecialty: deleteSpecialty,
+	getSpecialty: getSpecialty,
 };

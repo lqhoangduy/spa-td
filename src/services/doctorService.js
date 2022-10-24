@@ -123,6 +123,8 @@ const saveInfoDoctor = (request) => {
 					doctorInfo.addressClinic = request.addressClinic;
 					doctorInfo.nameClinic = request.nameClinic;
 					doctorInfo.note = request.note;
+					doctorInfo.specialtyId = request.specialtyId;
+					doctorInfo.clinicId = request.clinicId;
 
 					await doctorInfo.save();
 				} else {
@@ -134,6 +136,8 @@ const saveInfoDoctor = (request) => {
 						addressClinic: request.addressClinic,
 						nameClinic: request.nameClinic,
 						note: request.note,
+						specialtyId: request.specialtyId,
+						clinicId: request.clinicId,
 					});
 				}
 
@@ -238,6 +242,77 @@ const getDetailDoctorById = (id) => {
 				resolve({
 					errorCode: 0,
 					data: user,
+				});
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
+const getDoctorByIds = (ids) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!ids?.length) {
+				resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			} else {
+				const users = await db.User.findAll({
+					where: { id: ids, roleId: "R2" },
+					order: [["createdAt", "DESC"]],
+					attributes: {
+						exclude: ["password"],
+					},
+					include: [
+						{
+							model: db.Markdown,
+							attributes: ["description", "contentHTML", "contentMarkdown"],
+						},
+						{
+							model: db.DoctorInfo,
+							attributes: {
+								exclude: ["id", "doctorId"],
+							},
+							include: [
+								{
+									model: db.Allcode,
+									as: "priceData",
+									attributes: ["valueVi", "valueEn"],
+								},
+								{
+									model: db.Allcode,
+									as: "provinceData",
+									attributes: ["valueVi", "valueEn"],
+								},
+								{
+									model: db.Allcode,
+									as: "paymentData",
+									attributes: ["valueVi", "valueEn"],
+								},
+							],
+						},
+						{
+							model: db.Allcode,
+							as: "positionData",
+							attributes: ["valueVi", "valueEn"],
+						},
+					],
+					raw: true,
+					nest: true,
+				});
+
+				const result = users.map((user) => {
+					const image = user.image ? commonService.decrypt(user.image) : null;
+					return {
+						...user,
+						image: image,
+					};
+				});
+				resolve({
+					errorCode: 0,
+					data: result,
 				});
 			}
 		} catch (error) {
@@ -467,4 +542,5 @@ module.exports = {
 	deleteSchedules: deleteSchedules,
 	getSchedulesByDate: getSchedulesByDate,
 	getExtraInfo: getExtraInfo,
+	getDoctorByIds: getDoctorByIds,
 };
