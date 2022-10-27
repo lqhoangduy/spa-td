@@ -72,10 +72,29 @@ const handleGetSpecialty = async (req, res) => {
 	}
 };
 
+const handleGetDoctorSpecialty = async (req, res) => {
+	try {
+		const { specialtyId, provinceId } = req.query;
+		const data = await specialtyService.getDoctorSpecialty(
+			specialtyId,
+			provinceId
+		);
+
+		return res.status(200).json(data);
+	} catch (error) {
+		console.error(error);
+		return res.status(200).json({
+			errorCode: -1,
+			message: "Error from server",
+		});
+	}
+};
+
 module.exports = {
 	handleCreateSpecialty: handleCreateSpecialty,
 	handleGetSpecialties: handleGetSpecialties,
 	handleEditSpecialty: handleEditSpecialty,
 	handleDeleteSpecialty: handleDeleteSpecialty,
 	handleGetSpecialty: handleGetSpecialty,
+	handleGetDoctorSpecialty: handleGetDoctorSpecialty,
 };

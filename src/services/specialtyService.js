@@ -1,5 +1,6 @@
 import db from "../models/index";
 import commonService from "./commonService";
+import doctorService from "./doctorService";
 require("dotenv").config();
 
 const createSpecialty = (data) => {
@@ -151,9 +152,56 @@ const getSpecialty = (id) => {
 				});
 			}
 
+			const image = specialty?.image
+				? commonService.decrypt(specialty.image)
+				: null;
+			specialty.image = image;
+
 			resolve({
 				errorCode: 0,
 				data: specialty,
+			});
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
+const getDoctorSpecialty = (specialtyId, provinceId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!specialtyId) {
+				return resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			}
+
+			const queryCondition = {
+				specialtyId: specialtyId,
+			};
+
+			if (!!provinceId && provinceId != "null" && provinceId != "ALL") {
+				queryCondition.provinceId = provinceId;
+			}
+
+			const doctorSpecialty = await db.DoctorInfo.findAll({
+				where: queryCondition,
+				attributes: ["doctorId"],
+			});
+
+			const doctorIds = (doctorSpecialty || []).map((item) => item.doctorId);
+
+			let result = [];
+
+			if (doctorIds?.length) {
+				const resultDoctor = await doctorService.getDoctorByIds(doctorIds);
+				result = resultDoctor?.data || [];
+			}
+
+			resolve({
+				errorCode: 0,
+				data: result,
 			});
 		} catch (error) {
 			reject(error);
@@ -167,4 +215,5 @@ module.exports = {
 	editSpecialty: editSpecialty,
 	deleteSpecialty: deleteSpecialty,
 	getSpecialty: getSpecialty,
+	getDoctorSpecialty: getDoctorSpecialty,
 };
