@@ -81,9 +81,7 @@ const saveInfoDoctor = (request) => {
 				!request.contentMarkdown ||
 				!request.priceId ||
 				!request.provinceId ||
-				!request.paymentId ||
-				!request.addressClinic ||
-				!request.nameClinic
+				!request.paymentId
 			) {
 				resolve({
 					errorCode: 1,
@@ -120,8 +118,6 @@ const saveInfoDoctor = (request) => {
 					doctorInfo.priceId = request.priceId;
 					doctorInfo.provinceId = request.provinceId;
 					doctorInfo.paymentId = request.paymentId;
-					doctorInfo.addressClinic = request.addressClinic;
-					doctorInfo.nameClinic = request.nameClinic;
 					doctorInfo.note = request.note;
 					doctorInfo.specialtyId = request.specialtyId;
 					doctorInfo.clinicId = request.clinicId;
@@ -133,8 +129,6 @@ const saveInfoDoctor = (request) => {
 						priceId: request.priceId,
 						provinceId: request.provinceId,
 						paymentId: request.paymentId,
-						addressClinic: request.addressClinic,
-						nameClinic: request.nameClinic,
 						note: request.note,
 						specialtyId: request.specialtyId,
 						clinicId: request.clinicId,
@@ -222,6 +216,11 @@ const getDetailDoctorById = (id) => {
 									as: "paymentData",
 									attributes: ["valueVi", "valueEn"],
 								},
+								{
+									model: db.Clinic,
+									as: "clinicData",
+									attributes: ["name", "address"],
+								},
 							],
 						},
 						{
@@ -290,6 +289,11 @@ const getDoctorByIds = (ids) => {
 									model: db.Allcode,
 									as: "paymentData",
 									attributes: ["valueVi", "valueEn"],
+								},
+								{
+									model: db.Clinic,
+									as: "clinicData",
+									attributes: ["name", "address"],
 								},
 							],
 						},
@@ -514,6 +518,11 @@ const getExtraInfo = (id) => {
 							model: db.Allcode,
 							as: "paymentData",
 							attributes: ["valueVi", "valueEn"],
+						},
+						{
+							model: db.Clinic,
+							as: "clinicData",
+							attributes: ["name", "address"],
 						},
 					],
 					raw: true,

@@ -3,10 +3,15 @@ import commonService from "./commonService";
 import doctorService from "./doctorService";
 require("dotenv").config();
 
-const createSpecialty = (data) => {
+const createClinic = (data) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			if (!data.name || !data.descriptionHTML || !data.descriptionMarkdown) {
+			if (
+				!data.name ||
+				!data.address ||
+				!data.descriptionHTML ||
+				!data.descriptionMarkdown
+			) {
 				resolve({
 					errorCode: 1,
 					message: "Missing params!",
@@ -17,8 +22,9 @@ const createSpecialty = (data) => {
 					imageHash = commonService.encrypt(data.image);
 				}
 
-				await db.Specialty.create({
+				await db.Clinic.create({
 					name: data.name,
+					address: data.address,
 					image: imageHash,
 					descriptionHTML: data.descriptionHTML,
 					descriptionMarkdown: data.descriptionMarkdown,
@@ -26,7 +32,7 @@ const createSpecialty = (data) => {
 
 				resolve({
 					errorCode: 0,
-					message: "Create specialty successfully",
+					message: "Create clinic successfully",
 				});
 			}
 		} catch (error) {
@@ -36,16 +42,14 @@ const createSpecialty = (data) => {
 	});
 };
 
-const getSpecialties = () => {
+const getClinics = () => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let specialties = await db.Specialty.findAll();
-			const result = specialties.map((specialty) => {
-				let image = specialty.image
-					? commonService.decrypt(specialty.image)
-					: null;
+			let clinics = await db.Clinic.findAll();
+			const result = clinics.map((clinic) => {
+				let image = clinic.image ? commonService.decrypt(clinic.image) : null;
 				return {
-					...specialty,
+					...clinic,
 					image: image,
 				};
 			});
@@ -59,7 +63,7 @@ const getSpecialties = () => {
 	});
 };
 
-const editSpecialty = (data) => {
+const editClinic = (data) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			if (!data.id) {
@@ -69,24 +73,25 @@ const editSpecialty = (data) => {
 				});
 			}
 
-			const specialty = await db.Specialty.findOne({
+			const clinic = await db.Clinic.findOne({
 				where: { id: data.id },
 				raw: false,
 			});
-			if (specialty) {
-				specialty.name = data.name;
-				specialty.descriptionHTML = data.descriptionHTML;
-				specialty.descriptionMarkdown = data.descriptionMarkdown;
+			if (clinic) {
+				clinic.name = data.name;
+				clinic.address = data.address;
+				clinic.descriptionHTML = data.descriptionHTML;
+				clinic.descriptionMarkdown = data.descriptionMarkdown;
 				if (data.image) {
 					const imageHash = commonService.encrypt(data.image);
-					specialty.image = imageHash;
+					clinic.image = imageHash;
 				}
 
-				await specialty.save();
+				await clinic.save();
 
 				resolve({
 					errorCode: 0,
-					message: "Update specialty successfully",
+					message: "Update clinic successfully",
 				});
 			} else {
 				resolve({
@@ -100,7 +105,7 @@ const editSpecialty = (data) => {
 	});
 };
 
-const deleteSpecialty = (id) => {
+const deleteClinic = (id) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			if (!id) {
@@ -110,18 +115,18 @@ const deleteSpecialty = (id) => {
 				});
 			}
 
-			const specialty = await db.Specialty.findOne({
+			const clinic = await db.Clinic.findOne({
 				where: { id: id },
 				raw: false,
 			});
-			if (!specialty) {
+			if (!clinic) {
 				return resolve({
 					errorCode: 2,
 					message: "not_found",
 				});
 			}
 
-			await specialty.destroy();
+			await clinic.destroy();
 			resolve({
 				errorCode: 0,
 				message: "Deleted successfully",
@@ -132,7 +137,7 @@ const deleteSpecialty = (id) => {
 	});
 };
 
-const getSpecialty = (id) => {
+const getClinic = (id) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			if (!id) {
@@ -142,24 +147,22 @@ const getSpecialty = (id) => {
 				});
 			}
 
-			const specialty = await db.Specialty.findOne({
+			const clinic = await db.Clinic.findOne({
 				where: { id: id },
 			});
-			if (!specialty) {
+			if (!clinic) {
 				return resolve({
 					errorCode: 2,
 					message: "not_found",
 				});
 			}
 
-			const image = specialty?.image
-				? commonService.decrypt(specialty.image)
-				: null;
-			specialty.image = image;
+			const image = clinic?.image ? commonService.decrypt(clinic.image) : null;
+			clinic.image = image;
 
 			resolve({
 				errorCode: 0,
-				data: specialty,
+				data: clinic,
 			});
 		} catch (error) {
 			reject(error);
@@ -167,30 +170,24 @@ const getSpecialty = (id) => {
 	});
 };
 
-const getDoctorSpecialty = (specialtyId, provinceId) => {
+const getDoctorClinic = (clinicId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			if (!specialtyId) {
+			if (!clinicId) {
 				return resolve({
 					errorCode: 1,
 					message: "Missing params!",
 				});
 			}
 
-			const queryCondition = {
-				specialtyId: specialtyId,
-			};
-
-			if (!!provinceId && provinceId != "null" && provinceId != "ALL") {
-				queryCondition.provinceId = provinceId;
-			}
-
-			const doctorSpecialty = await db.DoctorInfo.findAll({
-				where: queryCondition,
+			const doctorClinic = await db.DoctorInfo.findAll({
+				where: {
+					clinicId: clinicId,
+				},
 				attributes: ["doctorId"],
 			});
 
-			const doctorIds = (doctorSpecialty || []).map((item) => item.doctorId);
+			const doctorIds = (doctorClinic || []).map((item) => item.doctorId);
 
 			let result = [];
 
@@ -210,10 +207,10 @@ const getDoctorSpecialty = (specialtyId, provinceId) => {
 };
 
 module.exports = {
-	createSpecialty: createSpecialty,
-	getSpecialties: getSpecialties,
-	editSpecialty: editSpecialty,
-	deleteSpecialty: deleteSpecialty,
-	getSpecialty: getSpecialty,
-	getDoctorSpecialty: getDoctorSpecialty,
+	createClinic: createClinic,
+	getClinics: getClinics,
+	editClinic: editClinic,
+	deleteClinic: deleteClinic,
+	getClinic: getClinic,
+	getDoctorClinic: getDoctorClinic,
 };

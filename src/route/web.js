@@ -6,6 +6,7 @@ import userController from "../controllers/userController";
 import doctorController from "../controllers/doctorController";
 import patientController from "../controllers/patientController";
 import specialtyController from "../controllers/specialtyController";
+import clinicController from "../controllers/clinicController";
 
 // we will upload image on cloudinary
 cloudinary.config({
@@ -45,6 +46,12 @@ const initWebRoutes = (app) => {
 		doctorController.handleGetDetailDoctorById
 	);
 	router.post("/api/get-doctor-by-ids", doctorController.handleGetDoctorByIds);
+	router.get(
+		"/api/get-extra-info-doctor",
+		doctorController.handleGetExtraInfoDoctor
+	);
+
+	// Schedules
 	router.post("/api/create-schedules", doctorController.handleCreateSchedules);
 	router.get("/api/get-schedules", doctorController.handleGetSchedules);
 	router.delete(
@@ -55,17 +62,15 @@ const initWebRoutes = (app) => {
 		"/api/get-schedules-by-date",
 		doctorController.handleGetSchedulesByDate
 	);
-	router.get(
-		"/api/get-extra-info-doctor",
-		doctorController.handleGetExtraInfoDoctor
-	);
 
+	// Book appointment
 	router.post("/api/book-appointment", patientController.handleBookAppointment);
 	router.post(
 		"/api/verify-book-appointment",
 		patientController.handleVerifyBookAppointment
 	);
 
+	// Specialty
 	router.post(
 		"/api/create-specialty",
 		specialtyController.handleCreateSpecialty
@@ -81,6 +86,14 @@ const initWebRoutes = (app) => {
 		"/api/get-doctor-specialty",
 		specialtyController.handleGetDoctorSpecialty
 	);
+
+	// Clinic
+	router.post("/api/create-clinic", clinicController.handleCreateClinic);
+	router.get("/api/get-clinics", clinicController.handleGetClinics);
+	router.put("/api/edit-clinic", clinicController.handleEditClinic);
+	router.delete("/api/delete-clinic", clinicController.handleDeleteClinic);
+	router.get("/api/get-clinic", clinicController.handleGetClinic);
+	router.get("/api/get-doctor-clinic", clinicController.handleGetDoctorClinic);
 
 	// Upload image only admin can use
 	router.post("/api/upload", (req, res) => {
