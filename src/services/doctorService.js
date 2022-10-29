@@ -3,6 +3,7 @@ import moment from "moment";
 import sequelize, { Op } from "sequelize";
 import db from "../models/index";
 import commonService from "../services/commonService";
+import { STATUS } from "../utils/contants";
 require("dotenv").config();
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE || 10;
@@ -540,6 +541,70 @@ const getExtraInfo = (id) => {
 	});
 };
 
+const getPatientBooking = (doctorId, date) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!doctorId || !date) {
+				resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			} else {
+				const formatDate = moment(new Date(date)).startOf("days").toDate();
+
+				const booking = await db.Booking.findAll({
+					where: {
+						doctorId: doctorId,
+						statusId: STATUS.CONFIRMED,
+						[Op.and]: [
+							sequelize.where(
+								sequelize.fn("date", sequelize.col("date")),
+								"=",
+								formatDate
+							),
+						],
+					},
+					include: [
+						{
+							model: db.User,
+							as: "patientData",
+							attributes: [
+								"email",
+								"firstName",
+								"lastName",
+								"phoneNumber",
+								"gender",
+								"address",
+							],
+							include: [
+								{
+									model: db.Allcode,
+									as: "genderData",
+									attributes: ["valueVi", "valueEn"],
+								},
+							],
+						},
+						{
+							model: db.Allcode,
+							as: "timeBookingData",
+							attributes: ["valueVi", "valueEn"],
+						},
+					],
+					raw: true,
+					nest: true,
+				});
+
+				resolve({
+					errorCode: 0,
+					data: booking,
+				});
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
@@ -552,4 +617,5 @@ module.exports = {
 	getSchedulesByDate: getSchedulesByDate,
 	getExtraInfo: getExtraInfo,
 	getDoctorByIds: getDoctorByIds,
+	getPatientBooking: getPatientBooking,
 };

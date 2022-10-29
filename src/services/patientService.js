@@ -3,15 +3,13 @@ import db from "../models/index";
 import { DEFAULT_PASSWORD, ROLES, STATUS } from "../utils/contants";
 import { v4 as uuidv4 } from "uuid";
 import mailService from "./mailService";
-import commonService from "./commonService";
 import userService from "./userService";
 require("dotenv").config();
 
 const buildUrlVerify = (doctorId) => {
 	const urlWeb = process.env.URL_WEB;
 	const token = uuidv4();
-	const tokenEncrypt = commonService.encrypt({ token });
-	const urlVerify = `${urlWeb}/verify-booking?id=${doctorId}&token=${tokenEncrypt}`;
+	const urlVerify = `${urlWeb}/verify-booking?id=${doctorId}&token=${token}`;
 
 	return {
 		url: urlVerify,
@@ -68,22 +66,35 @@ const bookAppointment = (data) => {
 						.startOf("days")
 						.toDate();
 
-					const [booking, isBookingCreated] = await db.Booking.findOrCreate({
-						where: {
-							patientId: user.id,
-						},
-						defaults: {
+					const booking = await db.Booking.findOne({
+						where: { patientId: user.id, statusId: STATUS.NEW },
+						raw: false,
+					});
+
+					if (booking) {
+						booking.statusId = STATUS.NEW;
+						booking.doctorId = data.doctorId;
+						booking.patientId = user.id;
+						booking.date = formatDate;
+						booking.timeType = data.timeType;
+						booking.token = token;
+
+						await booking.save();
+
+						result.booking = booking;
+						result.isBookingCreated = false;
+					} else {
+						const newBooking = await db.Booking.create({
 							statusId: STATUS.NEW,
 							doctorId: data.doctorId,
 							patientId: user.id,
 							date: formatDate,
 							timeType: data.timeType,
 							token: token,
-						},
-					});
-
-					result.booking = booking;
-					result.isBookingCreated = isBookingCreated;
+						});
+						result.booking = newBooking;
+						result.isBookingCreated = true;
+					}
 				}
 
 				if (result.booking && result.user) {
@@ -127,12 +138,10 @@ const verifyBookAppointment = (data) => {
 					message: "Missing params!",
 				});
 			} else {
-				const { token } = commonService.decrypt(data.token);
-
 				const appointment = await db.Booking.findOne({
 					where: {
 						doctorId: data.doctorId,
-						token: token,
+						token: data.token,
 						statusId: STATUS.NEW,
 					},
 					raw: false,
@@ -168,7 +177,10 @@ const verifyBookAppointment = (data) => {
 			}
 		} catch (error) {
 			console.error(error);
-			reject(error);
+			resolve({
+				errorCode: 2,
+				message: "not_found",
+			});
 		}
 	});
 };

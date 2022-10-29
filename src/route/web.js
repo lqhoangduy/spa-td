@@ -50,6 +50,10 @@ const initWebRoutes = (app) => {
 		"/api/get-extra-info-doctor",
 		doctorController.handleGetExtraInfoDoctor
 	);
+	router.get(
+		"/api/get-patient-booking",
+		doctorController.handleGetPatientBooking
+	);
 
 	// Schedules
 	router.post("/api/create-schedules", doctorController.handleCreateSchedules);

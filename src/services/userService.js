@@ -36,7 +36,14 @@ const checkUserEmail = (email) => {
 		try {
 			const user = await db.User.findOne({
 				where: { email: email },
-				attributes: ["email", "roleId", "password", "firstName", "lastName"],
+				attributes: [
+					"id",
+					"email",
+					"roleId",
+					"password",
+					"firstName",
+					"lastName",
+				],
 				raw: true,
 			});
 			resolve(user);
