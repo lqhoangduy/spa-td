@@ -615,7 +615,8 @@ const sendRemedy = (request) => {
 				!request.doctorId ||
 				!request.patientId ||
 				!request.timeType ||
-				!request.date
+				!request.date ||
+				!request.image
 			) {
 				resolve({
 					errorCode: 1,
