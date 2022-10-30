@@ -3,6 +3,7 @@ import moment from "moment";
 import sequelize, { Op } from "sequelize";
 import db from "../models/index";
 import commonService from "../services/commonService";
+import mailService from "../services/mailService";
 import { STATUS } from "../utils/contants";
 require("dotenv").config();
 
@@ -569,6 +570,7 @@ const getPatientBooking = (doctorId, date) => {
 							model: db.User,
 							as: "patientData",
 							attributes: [
+								"id",
 								"email",
 								"firstName",
 								"lastName",
@@ -605,6 +607,68 @@ const getPatientBooking = (doctorId, date) => {
 	});
 };
 
+const sendRemedy = (request) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (
+				!request.email ||
+				!request.doctorId ||
+				!request.patientId ||
+				!request.timeType ||
+				!request.date
+			) {
+				resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			} else {
+				const formatDate = moment(new Date(request.date))
+					.startOf("days")
+					.toDate();
+
+				const booking = await db.Booking.findOne({
+					where: {
+						doctorId: request.doctorId,
+						patientId: request.patientId,
+						timeType: request.timeType,
+						statusId: STATUS.CONFIRMED,
+						[Op.and]: [
+							sequelize.where(
+								sequelize.fn("date", sequelize.col("date")),
+								"=",
+								formatDate
+							),
+						],
+					},
+					raw: false,
+				});
+
+				if (booking) {
+					booking.statusId = STATUS.DONE;
+					await booking.save();
+
+					const dataMail = {
+						language: request.language,
+						receiverEmail: request.email,
+						patientName: request.patientName,
+						doctorName: request.doctorName,
+						time: request.time,
+						image: request.image,
+					};
+					await mailService.sendMailConfirm(dataMail);
+				}
+
+				resolve({
+					errorCode: 0,
+					data: booking,
+				});
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
@@ -618,4 +682,5 @@ module.exports = {
 	getExtraInfo: getExtraInfo,
 	getDoctorByIds: getDoctorByIds,
 	getPatientBooking: getPatientBooking,
+	sendRemedy: sendRemedy,
 };
