@@ -7,6 +7,7 @@ import doctorController from "../controllers/doctorController";
 import patientController from "../controllers/patientController";
 import specialtyController from "../controllers/specialtyController";
 import clinicController from "../controllers/clinicController";
+import handbookController from "../controllers/handbookController";
 
 // we will upload image on cloudinary
 cloudinary.config({
@@ -55,6 +56,7 @@ const initWebRoutes = (app) => {
 		doctorController.handleGetPatientBooking
 	);
 	router.post("/api/send-remedy", doctorController.handleSendRemedy);
+	router.get("/api/list-doctor", doctorController.handleGetListDoctor);
 
 	// Schedules
 	router.post("/api/create-schedules", doctorController.handleCreateSchedules);
@@ -99,6 +101,16 @@ const initWebRoutes = (app) => {
 	router.delete("/api/delete-clinic", clinicController.handleDeleteClinic);
 	router.get("/api/get-clinic", clinicController.handleGetClinic);
 	router.get("/api/get-doctor-clinic", clinicController.handleGetDoctorClinic);
+
+	// HandBook
+	router.post("/api/create-handbook", handbookController.handleCreateHandbook);
+	router.get("/api/get-handbooks", handbookController.handleGetHandbooks);
+	router.put("/api/edit-handbook", handbookController.handleEditHandbook);
+	router.delete(
+		"/api/delete-handbook",
+		handbookController.handleDeleteHandbook
+	);
+	router.get("/api/get-handbook", handbookController.handleGetHandbook);
 
 	// Upload image only admin can use
 	router.post("/api/upload", (req, res) => {

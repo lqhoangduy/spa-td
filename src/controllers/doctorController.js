@@ -165,6 +165,21 @@ const handleSendRemedy = async (req, res) => {
 	}
 };
 
+const handleGetListDoctor = async (req, res) => {
+	try {
+		const { provinceId } = req.query;
+		const data = await doctorService.getListDoctor(provinceId);
+
+		return res.status(200).json(data);
+	} catch (error) {
+		console.error(error);
+		return res.status(200).json({
+			errorCode: -1,
+			message: "Error from server",
+		});
+	}
+};
+
 module.exports = {
 	handleGetTopDoctorHome: handleGetTopDoctorHome,
 	handleGetAllDoctors: handleGetAllDoctors,
@@ -179,4 +194,5 @@ module.exports = {
 	handleGetDoctorByIds: handleGetDoctorByIds,
 	handleGetPatientBooking: handleGetPatientBooking,
 	handleSendRemedy: handleSendRemedy,
+	handleGetListDoctor: handleGetListDoctor,
 };

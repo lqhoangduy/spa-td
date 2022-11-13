@@ -670,6 +670,39 @@ const sendRemedy = (request) => {
 	});
 };
 
+const getListDoctor = (provinceId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const queryCondition = {};
+
+			if (!!provinceId && provinceId != "null" && provinceId != "ALL") {
+				queryCondition.provinceId = provinceId;
+			}
+
+			const doctorSpecialty = await db.DoctorInfo.findAll({
+				where: queryCondition,
+				attributes: ["doctorId"],
+			});
+
+			const doctorIds = (doctorSpecialty || []).map((item) => item.doctorId);
+
+			let result = [];
+
+			if (doctorIds?.length) {
+				const resultDoctor = await getDoctorByIds(doctorIds);
+				result = resultDoctor?.data || [];
+			}
+
+			resolve({
+				errorCode: 0,
+				data: result,
+			});
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
@@ -684,4 +717,5 @@ module.exports = {
 	getDoctorByIds: getDoctorByIds,
 	getPatientBooking: getPatientBooking,
 	sendRemedy: sendRemedy,
+	getListDoctor: getListDoctor,
 };
