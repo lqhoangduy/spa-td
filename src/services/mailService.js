@@ -121,7 +121,11 @@ const buildTemplateEmailRemedy = (data) => {
         <li><b>Time: ${data.time}</b></li>
         </ul>
       </div>
-      <p>Please check the prescription/invoice in the attached file.</p>
+			<p>
+				<b>Note of doctor: </b>
+				${data.note}
+			</p>
+      <p>Please check the picture of the prescription/ examination results in the attached file.</p>
       <p>
         <strong>Rejuvenate Spa</strong> sincerely thank!!!
       </p>
@@ -136,7 +140,11 @@ const buildTemplateEmailRemedy = (data) => {
         <li><b>Thời gian khám: ${data.time}</b></li>
         </ul>
       </div>
-      <p>Bạn vui lòng kiểm tra đơn thuốc/ hoá đơn trong file đính kèm.</p>
+			<p>
+				<b>Ghi chú của bác sĩ: </b>
+				${data.note}
+			</p>
+      <p>Bạn vui lòng kiểm tra ảnh đơn thuốc/ kết quả khám trong file đính kèm.</p>
       <p>
         <strong>Rejuvenate Spa</strong> xin chân thành cảm ơn!!!
       </p>

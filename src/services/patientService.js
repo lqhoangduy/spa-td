@@ -1,4 +1,5 @@
 import moment from "moment";
+import sequelize, { Op } from "sequelize";
 import db from "../models/index";
 import { DEFAULT_PASSWORD, ROLES, STATUS } from "../utils/contants";
 import { v4 as uuidv4 } from "uuid";
@@ -32,6 +33,31 @@ const bookAppointment = (data) => {
 					message: "Missing params!",
 				});
 			} else {
+				const formatDate = moment(new Date(data.date)).startOf("days").toDate();
+
+				const currentSchedule = await db.Schedule.findOne({
+					where: {
+						doctorId: data.doctorId,
+						timeType: data.timeType,
+						[Op.and]: [
+							sequelize.where(
+								sequelize.fn("date", sequelize.col("date")),
+								"=",
+								formatDate
+							),
+						],
+					},
+					raw: false,
+				});
+
+				if (!currentSchedule?.isAvailable) {
+					return resolve({
+						errorCode: 3,
+						message: "not_available",
+						data: null,
+					});
+				}
+
 				let result = {};
 
 				// Get or create patient
@@ -62,10 +88,6 @@ const bookAppointment = (data) => {
 
 				// Create booking record
 				if (user) {
-					const formatDate = moment(new Date(data.date))
-						.startOf("days")
-						.toDate();
-
 					const booking = await db.Booking.findOne({
 						where: { patientId: user.id, statusId: STATUS.NEW },
 						raw: false,
@@ -142,10 +164,18 @@ const verifyBookAppointment = (data) => {
 					where: {
 						doctorId: data.doctorId,
 						token: data.token,
-						statusId: STATUS.NEW,
+						statusId: [STATUS.NEW, STATUS.CANCEL],
 					},
 					raw: false,
 				});
+
+				if (appointment?.statusId === STATUS.CANCEL) {
+					return resolve({
+						errorCode: 3,
+						message: "not_available",
+						data: null,
+					});
+				}
 
 				if (appointment) {
 					const toDay = moment().startOf("day").toDate();
@@ -154,8 +184,36 @@ const verifyBookAppointment = (data) => {
 					);
 
 					if (validDate) {
-						appointment.statusId = STATUS.CONFIRMED;
+						const formatDate = moment(new Date(appointment.date))
+							.startOf("day")
+							.toDate();
+						const currentSchedule = await db.Schedule.findOne({
+							where: {
+								doctorId: appointment.doctorId,
+								timeType: appointment.timeType,
+								[Op.and]: [
+									sequelize.where(
+										sequelize.fn("date", sequelize.col("date")),
+										"=",
+										formatDate
+									),
+								],
+							},
+							raw: false,
+						});
 
+						if (!currentSchedule?.isAvailable) {
+							return resolve({
+								errorCode: 3,
+								message: "not_available",
+								data: null,
+							});
+						}
+
+						currentSchedule.isAvailable = false;
+						currentSchedule.save();
+
+						appointment.statusId = STATUS.CONFIRMED;
 						await appointment.save();
 
 						resolve({

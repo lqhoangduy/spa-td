@@ -8,11 +8,9 @@ module.exports = {
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
-			currentNumber: {
-				type: Sequelize.INTEGER,
-			},
-			maxNumber: {
-				type: Sequelize.INTEGER,
+			isAvailable: {
+				type: Sequelize.BOOLEAN,
+				defaultValue: true,
 			},
 			date: {
 				type: Sequelize.DATE,

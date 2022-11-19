@@ -336,15 +336,6 @@ const createSchedules = (data) => {
 					message: "Missing params!",
 				});
 			} else {
-				let schedules = data.schedules;
-
-				schedules = schedules.map((item) => {
-					return {
-						...item,
-						maxNumber: MAX_NUMBER_SCHEDULE,
-					};
-				});
-
 				const doctorId = data.doctorId;
 				const toDay = moment().startOf("day").toDate();
 
@@ -361,7 +352,7 @@ const createSchedules = (data) => {
 					},
 				});
 
-				await db.Schedule.bulkCreate(schedules);
+				await db.Schedule.bulkCreate(data.schedules);
 
 				resolve({
 					errorCode: 0,
@@ -556,7 +547,6 @@ const getPatientBooking = (doctorId, date) => {
 				const booking = await db.Booking.findAll({
 					where: {
 						doctorId: doctorId,
-						statusId: STATUS.CONFIRMED,
 						[Op.and]: [
 							sequelize.where(
 								sequelize.fn("date", sequelize.col("date")),
@@ -616,7 +606,8 @@ const sendRemedy = (request) => {
 				!request.patientId ||
 				!request.timeType ||
 				!request.date ||
-				!request.image
+				!request.image ||
+				!request.note
 			) {
 				resolve({
 					errorCode: 1,
@@ -645,7 +636,10 @@ const sendRemedy = (request) => {
 				});
 
 				if (booking) {
+					const imageHash = commonService.encrypt(request.image);
 					booking.statusId = STATUS.DONE;
+					booking.note = request.note;
+					booking.image = imageHash;
 					await booking.save();
 
 					const dataMail = {
@@ -654,7 +648,8 @@ const sendRemedy = (request) => {
 						patientName: request.patientName,
 						doctorName: request.doctorName,
 						time: request.time,
-						image: request.image,
+						image: request.image?.url,
+						note: request.note,
 					};
 					await mailService.sendMailConfirm(dataMail);
 				}
@@ -703,6 +698,63 @@ const getListDoctor = (provinceId) => {
 	});
 };
 
+const cancelPatientBooking = (request) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (
+				!request.doctorId ||
+				!request.patientId ||
+				!request.timeType ||
+				!request.date ||
+				!request.status
+			) {
+				resolve({
+					errorCode: 1,
+					message: "Missing params!",
+				});
+			} else {
+				const formatDate = moment(new Date(request.date))
+					.startOf("days")
+					.toDate();
+
+				const booking = await db.Booking.findOne({
+					where: {
+						doctorId: request.doctorId,
+						patientId: request.patientId,
+						timeType: request.timeType,
+						statusId: request.status,
+						[Op.and]: [
+							sequelize.where(
+								sequelize.fn("date", sequelize.col("date")),
+								"=",
+								formatDate
+							),
+						],
+					},
+					raw: false,
+				});
+
+				if (booking) {
+					booking.statusId = STATUS.CANCEL;
+					await booking.save();
+
+					resolve({
+						errorCode: 0,
+						data: booking,
+					});
+				} else {
+					resolve({
+						errorCode: 1,
+						data: false,
+					});
+				}
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 module.exports = {
 	getTopDoctorHome: getTopDoctorHome,
 	getAllDoctors: getAllDoctors,
@@ -718,4 +770,5 @@ module.exports = {
 	getPatientBooking: getPatientBooking,
 	sendRemedy: sendRemedy,
 	getListDoctor: getListDoctor,
+	cancelPatientBooking: cancelPatientBooking,
 };
