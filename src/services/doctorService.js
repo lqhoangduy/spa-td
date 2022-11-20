@@ -339,9 +339,14 @@ const createSchedules = (data) => {
 				const doctorId = data.doctorId;
 				const toDay = moment().startOf("day").toDate();
 
+				const newSchedules = data.schedules.filter(
+					(schedule) => schedule.isAvailable
+				);
+
 				await db.Schedule.destroy({
 					where: {
 						doctorId: doctorId,
+						isAvailable: true,
 						[Op.and]: [
 							sequelize.where(
 								sequelize.fn("date", sequelize.col("date")),
@@ -352,7 +357,7 @@ const createSchedules = (data) => {
 					},
 				});
 
-				await db.Schedule.bulkCreate(data.schedules);
+				await db.Schedule.bulkCreate(newSchedules);
 
 				resolve({
 					errorCode: 0,
