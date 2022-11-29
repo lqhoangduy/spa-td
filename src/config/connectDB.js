@@ -1,10 +1,20 @@
 const { Sequelize } = require("sequelize");
+require("dotenv").config();
 
 // Option 3: Passing parameters separately (other dialects)
-const sequelize = new Sequelize("hoangduy", "root", null, {
-	host: "localhost",
-	dialect: "mysql",
-	logging: false,
+const sequelize = new Sequelize({
+	database: process.env.DB_NAME,
+	host: process.env.DB_HOST,
+	username: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	port: process.env.DB_PORT,
+	dialect: "postgres",
+	dialectOptions: {
+		ssl: {
+			require: true,
+			rejectUnauthorized: false,
+		},
+	},
 });
 
 const connectDB = async () => {
