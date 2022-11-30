@@ -15,7 +15,7 @@ const sequelize = new Sequelize({
 	port: process.env.DB_PORT,
 	dialect: "postgres",
 	raw: true,
-	timezone: "+07:00",
+	// timezone: "+07:00",
 	query: {
 		raw: true,
 	},
