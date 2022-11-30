@@ -9,6 +9,11 @@ const sequelize = new Sequelize({
 	password: process.env.DB_PASSWORD,
 	port: process.env.DB_PORT,
 	dialect: "postgres",
+	raw: true,
+	timezone: "+07:00",
+	query: {
+		raw: true,
+	},
 	dialectOptions: {
 		ssl: {
 			require: true,
