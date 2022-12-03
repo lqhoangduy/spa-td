@@ -164,7 +164,7 @@ const verifyBookAppointment = (data) => {
 					where: {
 						doctorId: data.doctorId,
 						token: data.token,
-						statusId: [STATUS.NEW, STATUS.CANCEL],
+						statusId: [STATUS.NEW, STATUS.CONFIRMED, STATUS.CANCEL],
 					},
 					raw: false,
 				});
@@ -174,6 +174,13 @@ const verifyBookAppointment = (data) => {
 						errorCode: 3,
 						message: "not_available",
 						data: null,
+					});
+				}
+
+				if (appointment?.statusId === STATUS.CONFIRMED) {
+					return resolve({
+						errorCode: 0,
+						message: "Verify appointment success!",
 					});
 				}
 
