@@ -117,7 +117,8 @@ const buildTemplateEmailRemedy = (data) => {
       <p>Rejuvenate Spa would like to send information about medical examination results:</p>
       <div>
         <ul>
-        <li><b>Patient: ${data.doctorName}</b></li>
+        <li><b>Doctor: ${data.doctorName}</b></li>
+        <li><b>Patient: ${data.patientName}</b></li>
         <li><b>Time: ${data.time}</b></li>
         </ul>
       </div>
@@ -136,7 +137,8 @@ const buildTemplateEmailRemedy = (data) => {
       <p>Rejuvenate Spa xin gửi thông tin kết quả khám bệnh:</p>
       <div>
         <ul>
-        <li><b>Bệnh nhân: ${data.doctorName}</b></li>
+        <li><b>Bác sĩ khám: ${data.doctorName}</b></li>
+        <li><b>Bệnh nhân: ${data.patientName}</b></li>
         <li><b>Thời gian khám: ${data.time}</b></li>
         </ul>
       </div>
